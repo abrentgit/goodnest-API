@@ -4,8 +4,9 @@ services:
   - mongodb
 deploy:
   provider: heroku
+  edge: true
   api_key:
     secure: yS33hru1oU8KTlomP4EhvKkWALPksCE3MSFfCAicDxIysytk3ZGZWMX81gIs2IC8O179bazYyCimg4nY1hMLwFgSmzcDCIaUxvbq7+0W+vcWkkC1n5cfqQvLDADUxdF1nddvzw0C/agUSaLoo83zPMVo3lZbGo+y6XvjWpc7JbmZJE6WcC2gQU3forS41JVk6cw4YVHstLQ/dFzwlKyVeE6SQ9HW98X42CV1rCwDb1DTG74d2EnqFtWTky5YiGIlmcL476j9NE0cTQmIdVlXblo5ciGxoW8PcYe3IjFaY3A7r2RgWV0Om61D6elkgrqS5ROLIJIKOHBCCbPcty7H8NkTq1HKLjwHOBxXz5zxJx3Ep2Dmdh2e6z6kaCtsuBXgoJLgWTVxin0DRWMxKxyh7JudP7TxWqEEJuFSHx5x/xGe+HS6LCgGYgs9QRVtqeD7USBPQmoGuZ+WF1p/1MvXsooVq3CqPn8uvXZz1E5aw7ntggEC4RBcTkcDpiI6UULn3PZRWXextHBEbN8249Cp4Yt2JvWpolKfMSD1dE36AnCFol8/oYdT8iOWosw2W6tgjZKiTXZYTHeDbtMXPYy6BCwhKDi5wqxGATKa83RiyIXC3m2Trng9jU6a3rc9Peadr3tDwXuQm8J/3AyUlncJejStXUHKo0fMGz8kqRviuDM=
-  app: mighty-ravine-29318
+  app: 'mighty-ravine-29318'
   on:
     repo: abrentgit/goodnest-API
