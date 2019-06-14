@@ -33,7 +33,8 @@ userSchema.methods.serialize = function() {
     _id: this._id,
     name: this.name,
     email: this.email,
-    password: this.password
+    password: this.password,
+    role: this.role
   };
 };
 
