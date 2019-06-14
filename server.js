@@ -4,7 +4,6 @@ const cors = require('cors');
 const { CLIENT_ORIGIN } = require('./config');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-const { PORT, DATABASE_URL } = require('./config');
 const PORT = process.env.PORT || 3000;
 
 app.use(
