@@ -5,12 +5,15 @@ const { CLIENT_ORIGIN } = require('./config');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const PORT = process.env.PORT || 3000;
+const registerRouter = require('./register-router');
 
 app.use(
   cors({
     origin: CLIENT_ORIGIN
   })
 );
+
+app.use('/register', registerRouter);
 
 app.get('/api/*', (req, res) => {
   res.json({ ok: true });
