@@ -5,6 +5,7 @@ const { CLIENT_ORIGIN } = require('./config');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const { PORT, DATABASE_URL } = require('./config');
+const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -12,14 +13,13 @@ app.use(
   })
 );
 
-app.get('/', (req, res) => {
-  const message = 'Hello world';
-  res.send(message);
+app.get('/api/*', (req, res) => {
+  res.json({ ok: true });
 });
 
-app.listen(process.env.PORT || 8080, () => {
-  console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
-});
+app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+
+module.exports = { app };
 
 // let server;
 
