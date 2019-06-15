@@ -1,48 +1,51 @@
-const express = require('express');
-const router = express.Router();
+// const express = require('express');
+// const router = express.Router();
+// const app = express();
+// const { User } = require('./models');
+// const jwt = require('jsonwebtoken');
+// const bcrypt = require('bcrypt');
+// const saltRounds = 10;
 
-const { User } = require('./models');
+// // REGISTER USER
+// app.post('/register', (req, res) => {
+//   const requiredFields = ['name', 'password', 'email'];
+//   for (let i = 0; i < requiredFields.length; i++) {
+//     const field = requiredFields[i];
+//     if (!(field in req.body)) {
+//       const message = `Missing \`${field}\` in request body`;
+//       console.error(message);
+//       return res.status(400).send(message);
+//     }
+//   }
 
-// REGISTER USER
-app.post('/user', (req, res) => {
-  const requiredFields = ['name', 'password', 'email'];
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
+//   const createAuthToken = function(user) {
+//     return jwt.sign({ user }, config.JWT_SECRET, {
+//       subject: user.email,
+//       audience: user.role,
+//       expiresIn: config.JWT_EXPIRY,
+//       algorithm: 'HS256'
+//     });
+//   };
 
-  const createAuthToken = function(user) {
-    return jwt.sign({ user }, config.JWT_SECRET, {
-      subject: user.email,
-      audience: user.role,
-      expiresIn: config.JWT_EXPIRY,
-      algorithm: 'HS256'
-    });
-  };
+//   let hashed = bcrypt.hashSync(req.body.password, saltRounds);
 
-  let hashed = bcrypt.hashSync(req.body.password, saltRounds);
+//   User.create({
+//     name: req.body.name,
+//     email: req.body.email,
+//     password: hashed
+//   })
+//     .then(user => {
+//       const authToken = createAuthToken(user.serialize());
+//       res.status(201).json({
+//         authToken
+//       });
+//     })
+//     .catch(err => {
+//       console.log(err);
+//       res.status(422).json({
+//         message: 'Something went wrong'
+//       });
+//     });
+// });
 
-  User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: hashed
-  })
-    .then(guest => {
-      const authToken = createAuthToken(guest.serialize());
-      res.status(201).json({
-        authToken
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(422).json({
-        message: 'Something went wrong'
-      });
-    });
-});
-
-module.exports = router;
+// module.exports = router;
