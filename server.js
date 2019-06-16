@@ -1,15 +1,18 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { CLIENT_ORIGIN } = require('./config');
-const mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-const { DATABASE_URL, PORT } = require('./config');
-const registerRouter = require('./register-router');
-const jwt = require('jsonwebtoken');
 const { User } = require('./models');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const config = require('./config');
+
+const { CLIENT_ORIGIN, DATABASE_URL, PORT } = require('./config');
+
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+
+app.use(express.json());
 
 app.use(
   cors({
@@ -17,9 +20,7 @@ app.use(
   })
 );
 
-app.use(express.json());
-
-// app.use('/register', registerRouter);
+// REGISTER USER
 
 app.post('/register', (req, res) => {
   const requiredFields = ['name', 'password', 'email'];
@@ -33,15 +34,12 @@ app.post('/register', (req, res) => {
   }
 
   const createAuthToken = function(user) {
-    return jwt.sign(
-      { user },
-      {
-        subject: user.email,
-        audience: user.role,
-        expiresIn: config.JWT_EXPIRY,
-        algorithm: 'HS256'
-      }
-    );
+    return jwt.sign({ user }, config.JWT_SECRET, {
+      subject: user.email,
+      audience: user.role,
+      expiresIn: config.JWT_EXPIRY,
+      algorithm: 'HS256'
+    });
   };
 
   let hashed = bcrypt.hashSync(req.body.password, saltRounds);
@@ -65,9 +63,7 @@ app.post('/register', (req, res) => {
     });
 });
 
-// app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
-
-// module.exports = { app };
+// LOGIN USER
 
 let server;
 

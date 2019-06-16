@@ -1,13 +1,13 @@
 // const express = require('express');
+
 // const router = express.Router();
-// const app = express();
 // const { User } = require('./models');
 // const jwt = require('jsonwebtoken');
 // const bcrypt = require('bcrypt');
 // const saltRounds = 10;
+// const config = require('./config');
 
-// // REGISTER USER
-// app.post('/register', (req, res) => {
+// router.post('/', (req, res) => {
 //   const requiredFields = ['name', 'password', 'email'];
 //   for (let i = 0; i < requiredFields.length; i++) {
 //     const field = requiredFields[i];
