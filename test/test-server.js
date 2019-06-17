@@ -4,7 +4,6 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const mongoose = require('mongoose');
-const faker = require('faker');
 const expect = require('chai').expect;
 
 const { TEST_DATABASE_URL } = require('../config');
@@ -26,14 +25,14 @@ function tearDownDb() {
   return mongoose.connection.dropDatabase();
 }
 
-describe('Order Inn API', () => {
+describe('Goodnest API', () => {
   before(function() {
     runServer(TEST_DATABASE_URL);
   });
 
-  before(function() {
-    seedDishData();
-  });
+  // before(function() {
+  //   seedEntryData();
+  // });
 
   before(function(done) {
     chai
