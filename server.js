@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { User } = require('./models');
+const { User, Practice, Entry } = require('./models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -113,6 +113,73 @@ app.post('/login', (req, res) => {
       }
     }
   );
+});
+
+// NO VERIFY OF USER YET
+
+app.post('/entry', (req, res) => {
+  const requiredFields = [
+    'user',
+    'date',
+    'mood',
+    'hours',
+    'practices',
+    'content'
+  ];
+  for (let i = 0; i < requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`;
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
+
+  const userId = req.body.user;
+  const practiceIds = req.body.practices[0];
+  // MUST ADJUST THIS TO SPLIT ONCE CLIENT IS BUILT
+  console.log(practiceIds);
+
+  User.findById(userId, (err, user) => {
+    if (err) {
+      res.status(422).send({
+        message: 'Can not find user'
+      });
+    } else {
+      Practice.find(
+        {
+          _id: {
+            $in: practiceIds
+          }
+        },
+        function(err, practiceData) {
+          if (err) {
+            console.log(practiceData, 'self-care practices failing');
+            res.status(422).send({
+              message: 'Can not find practices'
+            });
+          } else {
+            Entry.create({
+              user: user._id,
+              mood: req.body.mood,
+              hours: req.body.hours,
+              practices: practiceIds,
+              content: req.body.content,
+              date: req.body.date
+            })
+
+              .then(order => res.status(201).json(order.serialize()))
+              .catch(err => {
+                console.error(err);
+                res.status(500).json({
+                  error: 'Something went wrong'
+                });
+              });
+          }
+        }
+      );
+    }
+  });
 });
 
 let server;

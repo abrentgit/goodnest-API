@@ -11,21 +11,16 @@ const userSchema = mongoose.Schema({
 });
 
 const entrySchema = new mongoose.Schema({
-  author: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  date: { type: Date, default: Date.now },
+  user: { type: String, required: true },
   mood: { type: String, required: true },
-  hours: { type: Number, required: true },
+  hours: { type: String, required: true },
   practices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Practice' }],
-  content: { type: mongoose.Schema.Types.ObjectId, ref: 'Journal' }
-});
-
-const journalSchema = mongoose.Schema({
-  title: { type: String, required: true },
-  content: { type: String, required: true }
+  content: { type: String },
+  date: { type: Date, default: Date.now }
 });
 
 const practiceSchema = mongoose.Schema({
-  practice: { type: String, required: true }
+  name: { type: String, required: true }
 });
 
 userSchema.methods.serialize = function() {
@@ -41,33 +36,25 @@ userSchema.methods.serialize = function() {
 entrySchema.methods.serialize = function() {
   return {
     _id: this._id,
-    author: this.author,
-    date: this.date,
+    user: this.user,
     mood: this.mood,
     hours: this.hours,
     practices: this.practices,
-    content: this.content
-  };
-};
-
-journalSchema.methods.serialize = function() {
-  return {
-    _id: this._id,
-    title: this.title,
-    content: this.content
+    content: this.content,
+    date: this.date
   };
 };
 
 practiceSchema.methods.serialize = function() {
   return {
     _id: this._id,
-    practice: this.description
+    name: this.name
   };
 };
 
 const Entry = mongoose.model('Entry', entrySchema);
 const Practice = mongoose.model('Practice', practiceSchema);
-const Journal = mongoose.model('Journal', journalSchema);
+
 const User = mongoose.model('User', userSchema);
 
-module.exports = { User, Entry, Practice, Journal };
+module.exports = { User, Entry, Practice };
