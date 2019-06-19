@@ -1,18 +1,16 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const { User, Practice, Entry } = require('./models');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
-const config = require('./config');
-const entryRouter = require('./routes/entryRouter');
 const router = express.Router();
-
 const { CLIENT_ORIGIN, DATABASE_URL, PORT } = require('./config');
 
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+
+const registerRouter = require('./routes/registerRouter');
+const entryRouter = require('./routes/entryRouter');
+const loginRouter = require('./routes/loginRouter');
+const practicesRouter = require('./routes/practicesRouter');
 
 app.use(express.json());
 
@@ -22,107 +20,10 @@ app.use(
   })
 );
 
-// HOME ROUTE
-// app.get('/', (req, res) => {
-//   res.json({ "message": "Homepage Test" });
-// });
-
-// REGISTER USER
-
-app.post('/register', (req, res) => {
-  const requiredFields = ['name', 'password', 'email'];
-  for (let i = 0; i < requiredFields.length; i++) {
-    const field = requiredFields[i];
-    if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`;
-      console.error(message);
-      return res.status(400).send(message);
-    }
-  }
-
-  const createAuthToken = function (user) {
-    return jwt.sign({ user }, config.JWT_SECRET, {
-      subject: user.email,
-      audience: user.role,
-      expiresIn: config.JWT_EXPIRY,
-      algorithm: 'HS256'
-    });
-  };
-
-  let hashed = bcrypt.hashSync(req.body.password, saltRounds);
-
-  User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: hashed
-  })
-    .then(user => {
-      const authToken = createAuthToken(user.serialize());
-      res.status(201).json({
-        authToken
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(422).json({
-        message: 'Something went wrong'
-      });
-    });
-});
-
-const createAuthToken = function (user) {
-  return jwt.sign({ user }, config.JWT_SECRET, {
-    subject: user.email,
-    audience: user.role,
-    expiresIn: config.JWT_EXPIRY,
-    algorithm: 'HS256'
-  });
-};
-
-// LOGIN USER
-
-app.post('/login', (req, res) => {
-  User.findOne(
-    {
-      email: req.body.email
-    },
-    function (err, user) {
-      console.log('error', err);
-      console.log('user', user);
-      console.log(req.body.email);
-      if (err) {
-        res.status(401).json({
-          error: 'Invalid credentials'
-        });
-      }
-
-      if (!user) {
-        res.status(404).json({
-          error: 'Invalid credentials'
-        });
-      } else {
-        let validPassword = bcrypt.compareSync(
-          req.body.password,
-          user.password
-        );
-
-        if (!validPassword) {
-          res.status(401).json({
-            error: 'Invalid credentials'
-          });
-        } else {
-          const authToken = createAuthToken(user.serialize());
-          res.status(200).json({
-            authToken,
-            user_id: user._id
-          });
-        }
-      }
-    }
-  );
-});
-
 app.use('/entries', entryRouter);
+app.use('/register', registerRouter);
+app.use('/login', loginRouter);
+app.use('/practices', practicesRouter);
 
 let server;
 
@@ -164,5 +65,4 @@ if (require.main === module) {
 }
 
 module.exports = { runServer, app, closeServer };
-module.exports = router;
 
