@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const config = require('./config');
+const entryRouter = require('./routes/entryRouter');
+const router = express.Router();
 
 const { CLIENT_ORIGIN, DATABASE_URL, PORT } = require('./config');
 
@@ -20,6 +22,11 @@ app.use(
   })
 );
 
+// HOME ROUTE
+app.get('/', (req, res) => {
+  res.json({ "message": "Welcome to ZeptoBook Product app" });
+});
+
 // REGISTER USER
 
 app.post('/register', (req, res) => {
@@ -33,7 +40,7 @@ app.post('/register', (req, res) => {
     }
   }
 
-  const createAuthToken = function(user) {
+  const createAuthToken = function (user) {
     return jwt.sign({ user }, config.JWT_SECRET, {
       subject: user.email,
       audience: user.role,
@@ -63,7 +70,7 @@ app.post('/register', (req, res) => {
     });
 });
 
-const createAuthToken = function(user) {
+const createAuthToken = function (user) {
   return jwt.sign({ user }, config.JWT_SECRET, {
     subject: user.email,
     audience: user.role,
@@ -79,7 +86,7 @@ app.post('/login', (req, res) => {
     {
       email: req.body.email
     },
-    function(err, user) {
+    function (err, user) {
       console.log('error', err);
       console.log('user', user);
       console.log(req.body.email);
@@ -115,9 +122,37 @@ app.post('/login', (req, res) => {
   );
 });
 
+app.use('/entries', entryRouter);
+
+
+
+//define the root in server
+//
+
 // NO VERIFY OF USER YET
 
-app.post('/entry', (req, res) => {
+// GET ENTRIES
+
+// app.get('/entries', (req, res) => {
+//   const perPage = 3;
+//   const currentPage = req.query.page || 1;
+
+//   Entry.find()
+//     .skip(perPage * currentPage - perPage)
+//     .limit(perPage)
+//     .then(entries => {
+//       res.json({
+//         entries: entries.map(entry => entry.serialize())
+//       });
+//     })
+//     .catch(err => {
+//       res.status(500).json({
+//         message: 'Internal server error'
+//       });
+//     });
+// });
+
+app.post('/entries', (req, res) => {
   const requiredFields = [
     'user',
     'date',
@@ -136,9 +171,7 @@ app.post('/entry', (req, res) => {
   }
 
   const userId = req.body.user;
-  const practiceIds = req.body.practices[0];
-  // MUST ADJUST THIS TO SPLIT ONCE CLIENT IS BUILT
-  console.log(practiceIds);
+  const practices = req.body.practices[0]; // FIX AFTER TESTING
 
   User.findById(userId, (err, user) => {
     if (err) {
@@ -149,10 +182,10 @@ app.post('/entry', (req, res) => {
       Practice.find(
         {
           _id: {
-            $in: practiceIds
+            $in: practices
           }
         },
-        function(err, practiceData) {
+        function (err, practiceData) {
           if (err) {
             console.log(practiceData, 'self-care practices failing');
             res.status(422).send({
@@ -163,7 +196,7 @@ app.post('/entry', (req, res) => {
               user: user._id,
               mood: req.body.mood,
               hours: req.body.hours,
-              practices: practiceIds,
+              practices: practices,
               content: req.body.content,
               date: req.body.date
             })
@@ -181,6 +214,53 @@ app.post('/entry', (req, res) => {
     }
   });
 });
+
+// DELETE ENTRY BY ID
+app.delete('/entries/:id', (req, res) => {
+  Entry.findByIdAndRemove(req.params.id)
+    .then(entry => res.status(204).end())
+    .catch(err => res.status(500).json({
+      message: 'Internal server error'
+    }));
+});
+
+// GET ENTRY BY ID
+
+app.get('/entries/:id', (req, res) => {
+  Entry.findById(req.params.id)
+    .then(order => res.json(order.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({
+        error: 'Something went horribly wrong'
+      });
+    });
+});
+
+// PUT ENTRY 
+
+app.put('/entries/:id', (req, res) => {
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    res.status(400).json({
+      error: 'Request path id and request body id values must match'
+    });
+  };
+
+  const updated = {};
+  const updateableFields = ['content'];
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      updated[field] = req.body[field];
+    }
+  });
+
+  Entry.findByIdAndUpdate(req.params.id, updated)
+    .then(updatedEntry => res.status(204).end())
+    .catch(err => res.status(500).json({
+      message: 'Something went wrong'
+    }));
+});
+
 
 let server;
 
@@ -222,3 +302,5 @@ if (require.main === module) {
 }
 
 module.exports = { runServer, app, closeServer };
+module.exports = router;
+

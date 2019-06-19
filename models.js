@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema({
   role: { type: String, default: 'User', required: true }
 });
 
+const practiceSchema = mongoose.Schema({
+  name: { type: String, required: true }
+});
+
 const entrySchema = new mongoose.Schema({
   user: { type: String, required: true },
   mood: { type: String, required: true },
@@ -19,11 +23,7 @@ const entrySchema = new mongoose.Schema({
   date: { type: Date, default: Date.now }
 });
 
-const practiceSchema = mongoose.Schema({
-  name: { type: String, required: true }
-});
-
-userSchema.methods.serialize = function() {
+userSchema.methods.serialize = function () {
   return {
     _id: this._id,
     name: this.name,
@@ -33,7 +33,7 @@ userSchema.methods.serialize = function() {
   };
 };
 
-entrySchema.methods.serialize = function() {
+entrySchema.methods.serialize = function () {
   return {
     _id: this._id,
     user: this.user,
@@ -45,7 +45,7 @@ entrySchema.methods.serialize = function() {
   };
 };
 
-practiceSchema.methods.serialize = function() {
+practiceSchema.methods.serialize = function () {
   return {
     _id: this._id,
     name: this.name
@@ -54,7 +54,6 @@ practiceSchema.methods.serialize = function() {
 
 const Entry = mongoose.model('Entry', entrySchema);
 const Practice = mongoose.model('Practice', practiceSchema);
-
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User, Entry, Practice };
