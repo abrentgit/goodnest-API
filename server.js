@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const router = express.Router();
+const morgan = require('morgan');
 const { CLIENT_ORIGIN, DATABASE_URL, PORT } = require('./config');
 
 const mongoose = require('mongoose');
@@ -12,6 +13,7 @@ const entryRouter = require('./routes/entryRouter');
 const loginRouter = require('./routes/loginRouter');
 const practicesRouter = require('./routes/practicesRouter');
 
+app.use(morgan('combined'));
 app.use(express.json());
 
 app.use(
