@@ -10,17 +10,19 @@ const userSchema = mongoose.Schema({
   role: { type: String, default: 'User', required: true }
 });
 
-const practiceSchema = mongoose.Schema({
+const authorSchema = mongoose.Schema({
   name: { type: String, required: true }
+})
+
+const quotesSchema = mongoose.Schema({
+  author: [{ type: mongoose.Schema.Types.ObjectId, ref: "Author" }],
+  content: { type: String, required: true }
 });
 
 const entrySchema = new mongoose.Schema({
   user: { type: String, required: true },
-  mood: { type: String, required: true },
-  hours: { type: String, required: true },
-  practices: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Practice' }],
-  content: { type: String },
-  date: { type: Date, default: Date.now }
+  date: { type: Date, default: Date.now },
+  content: { type: String, required: true }
 });
 
 userSchema.methods.serialize = function () {
@@ -33,27 +35,33 @@ userSchema.methods.serialize = function () {
   };
 };
 
+authorSchema.methods.serialize = function () {
+  return {
+    _id: this._id,
+    name: this.name,
+  };
+};
+
+quotesSchema.methods.serialize = function () {
+  return {
+    _id: this._id,
+    author: this.author,
+    content: this.content
+  };
+};
+
 entrySchema.methods.serialize = function () {
   return {
     _id: this._id,
     user: this.user,
-    mood: this.mood,
-    hours: this.hours,
-    practices: this.practices,
-    content: this.content,
-    date: this.date
-  };
-};
-
-practiceSchema.methods.serialize = function () {
-  return {
-    _id: this._id,
-    name: this.name
+    date: this.date,
+    content: this.content
   };
 };
 
 const Entry = mongoose.model('Entry', entrySchema);
-const Practice = mongoose.model('Practice', practiceSchema);
+const Author = mongoose.model('Author', authorSchema);
 const User = mongoose.model('User', userSchema);
+const Quote = mongoose.model('Quote', quotesSchema);
 
-module.exports = { User, Entry, Practice };
+module.exports = { User, Entry, Author, Quote };

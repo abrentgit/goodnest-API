@@ -11,7 +11,7 @@ mongoose.Promise = global.Promise;
 const registerRouter = require('./routes/registerRouter');
 const entryRouter = require('./routes/entryRouter');
 const loginRouter = require('./routes/loginRouter');
-const practicesRouter = require('./routes/practicesRouter');
+const quotesRouter = require('./routes/quotesRouter');
 
 app.use(morgan('combined'));
 app.use(express.json());
@@ -25,7 +25,7 @@ app.use(
 app.use('/entries', entryRouter);
 app.use('/register', registerRouter);
 app.use('/login', loginRouter);
-app.use('/practices', practicesRouter);
+app.use('/quotes', quotesRouter);
 
 let server;
 
