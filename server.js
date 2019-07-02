@@ -16,11 +16,16 @@ const quotesRouter = require('./routes/quotesRouter');
 app.use(morgan('combined'));
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: CLIENT_ORIGIN
-  })
-);
+// CORS
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.use('/entries', entryRouter);
 app.use('/register', registerRouter);
