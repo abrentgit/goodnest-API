@@ -24,6 +24,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     const requiredFields = [
         'user',
+        'title',
         'date',
         'content'
     ];
@@ -45,7 +46,7 @@ router.post('/', (req, res) => {
             });
         } else {
             Entry.create({
-                user: user._id,
+                title: req.body.title,
                 date: req.body.date,
                 content: req.body.content,
             })

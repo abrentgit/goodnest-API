@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Quote, Author } = require('../models');
+const { Quote } = require('../models');
 
 router.get('/', (req, res) => {
     const perPage = 3;
